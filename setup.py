@@ -16,7 +16,7 @@ setup(
     license='MIT License',
     description='Its a spicy meatball for serving up fresh hot entity-relationship diagrams straight from your django models.',
     long_description=README,
-    url='https://github.com/LegoStormtroopr/django-spaghetti-and-meatballs/',
+    url='https://github.com/furious-luke/django-spaghetti-and-meatballs/',
     author='Samuel Spencer',
     author_email='sam@sqbl.org',
     classifiers=[
@@ -35,5 +35,4 @@ setup(
     ],
     keywords='django entity relationship diagram erd uml',
     install_requires=['django'], # I mean obviously you'll have django installed if you want to use this.
-
 )

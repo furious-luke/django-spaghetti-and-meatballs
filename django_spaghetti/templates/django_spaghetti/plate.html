@@ -1,41 +1,23 @@
-{% block extra_scripts %}
-<script src="//cdnjs.cloudflare.com/ajax/libs/vis/4.7.0/vis.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.7.0/vis.min.css" rel="stylesheet" type="text/css" />
-{% endblock %}
-<div id="visualization"></div>
+{% load staticfiles %}
 
 <script>
-  var nodes = new vis.DataSet(
-      {{ meatballs|safe }}
-  );
-
-  var edges = new vis.DataSet(
-      {{ spaghetti|safe }}
-  );
-
-  var data = {
-    nodes: nodes,
-    edges: edges
-  };
-
-  var container = document.getElementById('visualization');
-  var options = {
-    "edges": {
-      "smooth": {
-        "type": "cubicBezier",
-        "roundness": 0.55
-      }
-    },
-  
-    "layout": {
-        hierarchical: {
-            sortMethod: 'hubsize',
-            direction:'LR'
-        }
-    },
-
-  };
-
-  var timeline = new vis.Network(container, data, options);
-
+  var meatballs = {{ meatballs|safe }};
+  var spaghetti = {{ spaghetti|safe }};
 </script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/vis/4.7.0/vis.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+<script src="{% static 'django_spaghetti/js/app_models.js' %}"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/vis/4.7.0/vis.min.css" rel="stylesheet" type="text/css" />
+<link href="{% static 'django_spaghetti/css/app_models.css' %}" rel="stylesheet" type="text/css" />
+
+<div id="app_list">
+  <h3>Applications</h3>
+  <div>
+    <button id="id_all_apps">Select all</button>
+    <button id="id_no_apps">Select none</button>
+  </div>
+</div>
+
+<div id="visualization"></div>

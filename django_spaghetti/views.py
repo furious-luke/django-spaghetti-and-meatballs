@@ -1,3 +1,5 @@
+import six, re
+
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render
 
@@ -7,12 +9,40 @@ from django.template.loader import get_template
 from django.template import Context
 import json
 
+
 graph_settings = getattr(settings, 'SPAGHETTI_SAUCE', {})
-apps = graph_settings.get('apps',[])
+extract_name_prog = re.compile(r".*?'([^']*)'>")
+
+
+def get_related_field(field):
+    try:
+        _to = field.related_field
+    except AttributeError:
+        _to = field.rel.to
+    result = extract_name_prog.match(str(_to)).group(1)
+    result = result.lower().split('.')
+    result = (result[-3], result[-1])
+    return result
+
 
 def plate(request):
     excludes = ['%s__%s'%(app,model) for app,models in graph_settings.get('exclude',{}).items() for model in models ]
-    models = ContentType.objects.filter(app_label__in=apps)
+    get_excludes = request.GET.get('exclude', [])
+    if isinstance(get_excludes, six.string_types):
+        get_excludes = [get_excludes]
+    excludes.extend(get_excludes)
+
+    apps = graph_settings.get('apps', [])
+    get_apps = request.GET.get('app', [])
+    if isinstance(get_apps, six.string_types):
+        get_apps = [get_apps]
+    if get_apps:
+        apps = get_apps
+    if apps == '__all__':
+        models = ContentType.objects.all()
+    else:
+        models = ContentType.objects.filter(app_label__in=apps)
+
     nodes = []
     edges = []
     for model in models:
@@ -35,7 +65,7 @@ def plate(request):
         for f in fields:
             f.ftype = str(f.__class__).split('.')[-1][:-2]
             if type(f) == related.ForeignKey:
-                _to = tuple(str(f.related_field).lower().split('.')[0:2])
+                _to = get_related_field(f)
                 if _to[0] != model.app_label:
                     edge_color = {'inherit':'both'}
                 edges.append(
@@ -47,7 +77,8 @@ def plate(request):
                     }
                 )
             elif type(f) == related.OneToOneField:
-                _to = tuple(str(f.related_field).lower().split('.')[0:2])
+                _to = get_related_field(f)
+                # _to = tuple(str(f.related_field).lower().split('.')[0:2])
                 if _to[0] != model.app_label:
                     edge_color = {'inherit':'both'}
                 edges.append(
@@ -60,8 +91,10 @@ def plate(request):
                         'label':'|'
                     }
                 )
+
         for f in parents:
-            _to = tuple(str(f.related_field).lower().split('.')[0:2])
+            _to = get_related_field(f)
+            # _to = tuple(str(f.related_field).lower().split('.')[0:2])
             if _to[0] != model.app_label:
                 edge_color = {'inherit':'both'}
             edges.append(
@@ -105,4 +138,4 @@ def plate(request):
         'meatballs':json.dumps(nodes),
         'spaghetti':json.dumps(edges)
     }
-    return render(request, 'django_spaghetti/plate.html', data)
+    return render(request, 'explore_models.html', data)

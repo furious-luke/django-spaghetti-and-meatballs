@@ -1,0 +1,32 @@
+#app-buttons {
+    margin-bottom: 5px;
+}
+#visualization {
+    border: 1px solid lightgray;
+}
+#app_list {
+    border: 1px solid lightgray;
+    margin-bottom: 5px;
+    padding: 10px;
+}
+.column {
+    display: inline-block;
+}
+.app-entry {
+    width:
+    display: flex;
+    alight-items: center;
+    width: 160px;
+    height: 18px;
+    padding-right: 20px;
+}
+.input-box {
+    position: absolute;
+}
+.color-box {
+    width: 18px;
+    height: 18px;
+    border: 2px;
+    border-style: solid;
+    border-color: #ffffff;
+}
