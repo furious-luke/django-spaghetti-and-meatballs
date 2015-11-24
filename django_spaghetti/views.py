@@ -57,7 +57,7 @@ def plate(request):
         fields = [f for f in model.model_class()._meta.fields if not str(f.name).endswith('_ptr')]
         parents = [f for f in model.model_class()._meta.fields if str(f.name).endswith('_ptr')]
         many = [f for f in model.model_class()._meta.many_to_many]
-        if graph_settings.get('show_fields',True):
+        if graph_settings.get('show_fields',False):
             label += "\n%s\n"%("-"*len(model.model))
             label += "\n".join([str(f.name) for f in fields])
         edge_color = {'inherit':'from'}
